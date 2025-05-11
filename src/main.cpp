@@ -1,0 +1,24 @@
+//
+// Created by michn on 5/10/2025.
+//
+
+#include <format>
+#include <iostream>
+
+#include "uci.h"
+
+int main(const int argc, [[maybe_unused]] char *argv[]) {
+    using namespace Kreveta;
+
+    // the first token is always the name
+    if (argc > 1) {
+        std::cerr << "Command line arguments are not supported" << std::endl;
+        return 1;
+    }
+
+    // header text to be displayed
+    UCI::log(std::format("{}-{} by {}", UCI::ENGINE_NAME, UCI::ENGINE_VERSION, UCI::ENGINE_AUTHOR));
+    UCI::loop();
+
+    return 0;
+}
