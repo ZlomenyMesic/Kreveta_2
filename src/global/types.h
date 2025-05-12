@@ -24,6 +24,10 @@ enum Color : uint8_t {
     COL_NONE  = 2
 };
 
+__forceinline constexpr Color col_flip(const Color col) {
+    return col == COL_WHITE ? COL_BLACK : COL_WHITE;
+}
+
 enum PieceType : uint8_t {
     PT_PAWN   = 0,
     PT_KNIGHT = 1,

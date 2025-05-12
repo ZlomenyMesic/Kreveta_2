@@ -8,21 +8,21 @@
 #include <bit>
 #include <cstdint>
 
-__forceinline constexpr uint8_t popc(const uint64_t bb) {
+__forceinline constexpr uint8_t popc(const uint64_t bb) noexcept {
     return std::popcount<uint64_t>(bb);
 }
 
-__forceinline constexpr uint8_t ls1b(const uint64_t bb) {
+__forceinline constexpr uint8_t ls1b(const uint64_t bb) noexcept {
     return std::countr_zero<uint64_t>(bb);
 }
 
-__forceinline constexpr uint8_t ls1b_reset(uint64_t &bb) {
+__forceinline constexpr uint8_t ls1b_reset(uint64_t &bb) noexcept {
     const auto index = std::countr_zero<uint64_t>(bb);
     bb &= bb - 1;
     return index;
 }
 
-__forceinline constexpr bool is_bit_set(const uint64_t bb, const uint8_t index) {
+__forceinline constexpr bool is_bit_set(const uint64_t bb, const uint8_t index) noexcept {
     return 1UL << index & bb;
 }
 

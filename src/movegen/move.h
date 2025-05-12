@@ -9,8 +9,11 @@
 #include <string_view>
 
 #include "../global/types.h"
+#include "src/board.h"
 
 namespace Kreveta {
+
+class Board;
 
 struct Move {
     constexpr Move(const uint8_t start, const uint8_t end, const PieceType piece, const PieceType capture, const PieceType promotion) {
@@ -39,29 +42,29 @@ struct Move {
     // we then shift correctly to leave us with a useful number
 
     [[nodiscard]]
-    constexpr __forceinline uint8_t start() const {
+    __forceinline constexpr uint8_t start() const noexcept {
         return _flags & START_MASK;
     }
 
     [[nodiscard]]
-    constexpr __forceinline uint8_t end() const {
+    __forceinline constexpr uint8_t end() const noexcept {
         return (_flags & END_MASK) >> END_OFFSET;
     }
 
-    __forceinline PieceType piece() const {
+    __forceinline PieceType piece() const noexcept {
         return static_cast<PieceType>((_flags & PIECE_MASK) >> PIECE_OFFSET);
     }
 
-    __forceinline PieceType capture() const {
+    __forceinline PieceType capture() const noexcept {
         return static_cast<PieceType>((_flags & CAPT_MASK) >> CAPT_OFFSET);
     }
 
-    __forceinline PieceType promotion() const {
+    __forceinline PieceType promotion() const noexcept {
         return static_cast<PieceType>((_flags & PROM_MASK) >> PROM_OFFSET);
     }
 
     static bool is_valid_format(const std::string_view &move);
-    static Move str_to_move(const std::string_view &move);
+    static Move str_to_move(const std::string_view &move, const Board &context);
     static std::string_view to_str(Move move);
 
 private:

@@ -8,13 +8,42 @@
 
 #include "uci.h"
 
+#include "bitboard.h"
+#include "position.h"
 #include "utils.h"
 
 namespace Kreveta {
 
 // just to simplify syntax
-void UCI::log(const std::string_view &msg) {
+template<typename T>
+void UCI::log(const T &msg) {
     std::cout << msg << std::endl;
+}
+
+// the above function doesn't handle string literals, so we must overload it
+void UCI::log(const char *msg) {
+    std::cout << msg << std::endl;
+}
+
+template<typename ... Args>
+void UCI::log_stats(const std::string &name, const uint64_t value, Args... data) {
+    constexpr std::string_view STATS_HEADER = "---STATS-------------------------------";
+    constexpr std::string_view STATS_AFTER  = "---------------------------------------";
+
+    std::cout << STATS_HEADER << std::endl;
+    log_stats_rec(name, value, data...);
+    std::cout << STATS_AFTER << std::endl;
+}
+
+template<typename ... Args>
+void UCI::log_stats_rec(const std::string &name, const uint64_t value, Args... data) {
+    constexpr int DATA_OFFSET = 23;
+
+    const int spaces = static_cast<int>(DATA_OFFSET - name.size());
+    std::cout << name << ':' << (spaces
+        ? std::string(spaces, ' ') : "") << format_uint64_t(value) << std::endl;
+
+    log_stats_rec(data...);
 }
 
 void UCI::loop() {
@@ -39,29 +68,54 @@ void UCI::handle_command(const std::string &command) {
     }
 
     switch (iterator->second) {
-        case Command::CMD_UCI:     cmd_uci();     break;
-        case Command::CMD_ISREADY: cmd_isready(); break;
+        case Command::CMD_UCI:      cmd_uci();            break;
+        case Command::CMD_ISREADY:  cmd_isready();        break;
+        case Command::CMD_D:        cmd_d();              break;
+
+        case Command::CMD_POSITION: cmd_position(tokens); break;
 
 #ifdef DEBUG
-        case Command::CMD_TEST:    cmd_test();    break;
+        case Command::CMD_TEST:     cmd_test();           break;
 #endif
 
-        default:                                  break;
+        default: break;
     }
 }
 
-inline void UCI::cmd_uci() {
+inline void UCI::cmd_uci() noexcept {
     log(std::format("id name {}-{}\nid author {}", ENGINE_NAME, ENGINE_VERSION, ENGINE_AUTHOR));
     log("uciok");
 }
 
-inline void UCI::cmd_isready() {
+inline void UCI::cmd_isready() noexcept {
     log("readyok");
+}
+
+inline void UCI::cmd_d() {
+    Position::board.print();
+}
+
+
+void UCI::cmd_position(const std::vector<std::string_view> &tokens) {
+    if (tokens.size() < 2) {
+        log("Missing arguments in position (startpos/fen).");
+        return;
+    }
+
+    if (tokens[1] == "startpos") {
+        Position::set_startpos(tokens);
+    }
+
+    else if (tokens[1] == "fen") {
+        Position::set_position_fen(tokens);
+    }
+
+    else log(std::format("Invalid argument '{}'", tokens[1]));
 }
 
 #ifdef DEBUG
 void UCI::cmd_test() {
-    log("Hello, World!");
+
 }
 #endif
 
@@ -77,6 +131,7 @@ const std::unordered_map<std::string_view, UCI::Command> UCI::cmd_map = {
     {"position",   Command::CMD_POSITION},
     {"go",		  Command::CMD_GO},
     {"perft",      Command::CMD_PERFT},
+    {"d",          Command::CMD_D},
     {"test",       Command::CMD_TEST},
 };
 

@@ -5,21 +5,34 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define STRING_UTILS
-
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <ranges>
 
 namespace Kreveta {
 
-#ifdef STRING_UTILS
+// we need this to allow pretty numbers in stats
+struct comma_numpunct final : std::numpunct<char> {
+    char do_decimal_point() const override { return ','; }
+    std::string do_grouping() const override { return "\3"; }
+};
 
-__forceinline constexpr bool is_str_blank(const std::string_view &str) {
+// convert a number to string with pretty number separators
+inline std::string format_uint64_t(const uint64_t n) {
+    std::ostringstream os;
+    os.imbue(std::locale(std::locale(), new comma_numpunct));
+    os << n;
+    return os.str();
+}
+
+// check whether a string is empty or consists of just whitespace characters
+constexpr bool is_str_blank(const std::string_view &str) noexcept {
     return str.empty()
         || str.find_first_not_of(" \n\t\r") == std::string_view::npos;
 }
 
+// split a string into tokens using a space as the delimeter
 inline std::vector<std::string_view> str_split(const std::string& str) {
     std::vector<std::string_view> tokens {};
 
@@ -48,29 +61,10 @@ inline std::vector<std::string_view> str_split(const std::string& str) {
     return tokens;
 }
 
-template <typename T>
-constexpr std::string uint_to_str(T value) {
-    static_assert(std::is_unsigned_v<T>);
-
-    // the maximum length of uint64_t is 20 digits, plus one for the
-    // null terminator. this should be safe for all unsigned types
-    char buffer[21];
-    auto [ptr, ec] = std::to_chars(buffer, buffer + sizeof(buffer), value);
-
-    // return empty string if conversion failed
-    if (ec != std::errc()) {
-        return {};
-    }
-
-    // create a string from the valid part of the buffer
-    return std::string(buffer, ptr);
+inline bool try_parse(const std::string_view &str, int& out_value) {
+    const auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), out_value);
+    return ec == std::errc();
 }
-
-__forceinline constexpr std::string bool_to_str(const bool value) {
-    return value ? "true" : "false";
-}
-
-#endif //STRING_UTILS
 
 }
 

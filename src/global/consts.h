@@ -13,6 +13,8 @@ constexpr std::string_view PIECES     = "pnbrqk";
 constexpr std::string_view PROMOTIONS = "nbrq";
 constexpr std::string_view FILES      = "abcdefgh";
 
+constexpr std::string_view STARTPOS_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 }
 
 #endif //CONSTS_H

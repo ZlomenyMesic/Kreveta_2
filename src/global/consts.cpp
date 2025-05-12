@@ -4,6 +4,8 @@
 
 #include "consts.h"
 
+#include <iostream>
+
 namespace Kreveta {
 
 }

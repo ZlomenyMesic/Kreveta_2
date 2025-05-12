@@ -28,6 +28,10 @@ add_library(Kreveta_2_logic
         src/global/types.h
         src/movegen/move.cpp
         src/movegen/move.h
+        src/board.cpp
+        src/board.h
+        src/position.cpp
+        src/position.h
 )
 target_include_directories(Kreveta_2_logic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -42,6 +46,10 @@ add_executable(Kreveta_2 src/main.cpp
         src/global/types.h
         src/movegen/move.cpp
         src/movegen/move.h
+        src/board.cpp
+        src/board.h
+        src/position.cpp
+        src/position.h
 )
 target_link_libraries(Kreveta_2 PRIVATE Kreveta_2_logic)
 

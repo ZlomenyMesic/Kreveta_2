@@ -7,6 +7,8 @@
 #include "move.h"
 
 #include "../global/consts.h"
+#include "src/board.h"
+#include "src/uci.h"
 
 namespace Kreveta {
 
@@ -43,16 +45,19 @@ bool Move::is_valid_format(const std::string_view &move) {
 // which is used by UCI. there is no information about the piece moved; only the
 // initial square and the square we landed on (e.g. "e2e4"). there may be an
 // additional character for promotion (e.g. "e7e8q").
-Move Move::str_to_move(const std::string_view &move) {
+Move Move::str_to_move(const std::string_view &move, const Board &context) {
 
     // indices of starting and ending squares. we have already made
     // sure the string is correct, so there is no need to do it again
     const uint8_t start = static_cast<uint8_t>((8 - (move[1] - '0')) * 8) + FILES.find(move[0]);
     const uint8_t end   = static_cast<uint8_t>((8 - (move[3] - '0')) * 8) + FILES.find(move[2]);
 
+    const Color col = context.w_occupied & 1ULL << start
+        ? COL_WHITE : COL_BLACK;
+
     // the piece that moved and a potential capture
-    const PieceType piece {PT_NONE};//UCI::board.piece_at(start).type;
-    const PieceType capt  {PT_NONE};//UCI::board.piece_at(end).type;
+    const PieceType piece = context.piece_at(start, col);
+    const PieceType capt  = context.piece_at(end, col_flip(col));
 
     // regular promotions
     PieceType prom = move.length() == 5
@@ -69,7 +74,7 @@ Move Move::str_to_move(const std::string_view &move) {
     if (piece == PT_PAWN && capt == PT_NONE && move[0] != move[2])
         prom = PT_PAWN;
 
-    return {Move(start, end, piece, capt, prom)};
+    return { Move(start, end, piece, capt, prom) };
 }
 
 std::string_view Move::to_str(const Move move) {
@@ -100,7 +105,7 @@ std::string_view Move::to_str(const Move move) {
         len = 5;
     }
 
-    return {std::string_view(buffer, len)};
+    return { std::string_view(buffer, len) };
 }
 
 }
