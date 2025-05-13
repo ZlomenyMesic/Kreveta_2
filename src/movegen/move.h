@@ -16,10 +16,11 @@ namespace Kreveta {
 class Board;
 
 struct Move {
+    constexpr Move() = default;
     constexpr Move(const uint8_t start, const uint8_t end, const PieceType piece, const PieceType capture, const PieceType promotion) {
 
-        // flags are only set when the constructor is called, after that they cannot be changed.
-        // there isn't really a reason to have an option to change them later
+        // flags are only set when the constructor is called, after that they cannot be
+        // modifed. there isn't really a reason to have the option to change them later
         _flags |= start;
         _flags |= end       << END_OFFSET;
         _flags |= piece     << PIECE_OFFSET;
@@ -37,9 +38,9 @@ struct Move {
         return _flags != m._flags;
     }
 
-    // when getting this information, we first & the flags and the
+    // when reading this information, we first & the flags and the
     // correct mask - this keeps only the required bits, and those
-    // we then shift correctly to leave us with a useful number
+    // we then shift correctly to end up with a useful number
 
     [[nodiscard]]
     __forceinline constexpr uint8_t start() const noexcept {

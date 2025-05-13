@@ -23,7 +23,7 @@ __forceinline constexpr uint8_t ls1b_reset(uint64_t &bb) noexcept {
 }
 
 __forceinline constexpr bool is_bit_set(const uint64_t bb, const uint8_t index) noexcept {
-    return 1UL << index & bb;
+    return 1ULL << index & bb;
 }
 
 #endif //BITBOARD_H

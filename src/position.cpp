@@ -160,7 +160,6 @@ bool Position::try_play_moves(const std::vector<std::string_view> &tokens, Board
         }
 
         new_board.play_move(Move::str_to_move(tokens[i], new_board));
-        new_board.color = col_flip(new_board.color);
     }
 
     return true;

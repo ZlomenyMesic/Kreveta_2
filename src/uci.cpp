@@ -11,6 +11,7 @@
 #include "bitboard.h"
 #include "position.h"
 #include "utils.h"
+#include "movegen/movegen.h"
 #include "movegen/movetables.h"
 
 namespace Kreveta {
@@ -117,9 +118,10 @@ void UCI::cmd_position(const std::vector<std::string_view> &tokens) {
 void UCI::cmd_test() {
     log("Hello, World!");
 
-    uint64_t king = 0x0800000000000000;
+    Move moves[128];
+    int count = Movegen::get_legal_moves(Position::board, moves);
 
-    log((int)popc(MoveTables::get_king_targets(king, 0xFFFFFFFFFFFFFFFF)));
+    log(std::format("pseudolegal moves: {}", count));
 }
 #endif
 
