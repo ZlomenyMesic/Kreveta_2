@@ -39,6 +39,7 @@ private:
     static void handle_command(const std::string &command);
 
     inline static void cmd_position(const std::vector<std::string_view> &tokens);
+    static void cmd_go(const std::vector<std::string_view> &tokens);
 
 #ifdef DEBUG
     static void cmd_test();

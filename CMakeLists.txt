@@ -3,6 +3,8 @@ project(Kreveta_2)
 
 set(CMAKE_CXX_STANDARD 26)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
+
 # this allows us to only compile some code in debug build
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG)

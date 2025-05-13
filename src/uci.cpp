@@ -12,7 +12,6 @@
 #include "position.h"
 #include "utils.h"
 #include "movegen/movegen.h"
-#include "movegen/movetables.h"
 
 namespace Kreveta {
 
@@ -65,7 +64,7 @@ void UCI::loop() {
 
 void UCI::handle_command(const std::string &command) {
     const auto tokens = str_split(command);
-    const auto cmd = tokens[0];
+    const auto cmd = tokens.at(0);
 
     if (cmd == "uci") {
         log(std::format("id name {}-{}\nid author {}", ENGINE_NAME, ENGINE_VERSION, ENGINE_AUTHOR));
@@ -82,6 +81,10 @@ void UCI::handle_command(const std::string &command) {
 
     else if (cmd == "position") {
         cmd_position(tokens);
+    }
+
+    else if (cmd == "go") {
+        cmd_go(tokens);
     }
 
 #ifdef DEBUG
@@ -112,6 +115,17 @@ void UCI::cmd_position(const std::vector<std::string_view> &tokens) {
     }
 
     else log(std::format("Invalid argument '{}'", tokens[1]));
+}
+
+void UCI::cmd_go(const std::vector<std::string_view> &tokens) {
+
+    Move moves[128];
+    const int count = Movegen::get_legal_moves(Position::board, moves);
+
+    const int the_chosen_one = rand_int(0, count);
+    Move m = moves[the_chosen_one];
+
+    log(std::format("bestmove {}", Move::to_str(m)));
 }
 
 #ifdef DEBUG

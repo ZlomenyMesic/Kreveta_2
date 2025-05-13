@@ -90,7 +90,7 @@ std::string_view Move::to_str(const Move move) {
     // this lambda adds a square to the buffer with a specified offset
     const auto add_square = [&](const int index, const int offset) {
         buffer[offset]     = static_cast<char>('a' + (index & 7));
-        buffer[offset + 1] = static_cast<char>('1' + (index >> 3));
+        buffer[offset + 1] = static_cast<char>('8' - (index >> 3));
     };
 
     // add the starting and ending squares

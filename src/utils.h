@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <ranges>
+#include <random>
 
 namespace Kreveta {
 
@@ -64,6 +65,15 @@ inline std::vector<std::string_view> str_split(const std::string& str) {
 inline bool try_parse(const std::string_view &str, int& out_value) {
     const auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), out_value);
     return ec == std::errc();
+}
+
+// max value is intentionally excluded
+inline int rand_int(const int min, const int max) {
+    static std::random_device rand;;
+    static std::mt19937 gen(rand());
+
+    std::uniform_int_distribution dist(min, max - 1);
+    return dist(gen);
 }
 
 }
