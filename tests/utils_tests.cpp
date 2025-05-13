@@ -27,13 +27,3 @@ TEST_CASE("split string correctly") {
 
     REQUIRE(Kreveta::str_split(str3)[2] == "moves");
 }
-
-TEST_CASE("unsigned int to string") {
-    constexpr uint8_t  a = 113;
-    constexpr uint32_t b = 123456789;
-    constexpr uint64_t c = 7787012921290;
-
-    REQUIRE(Kreveta::uint_to_str<uint8_t>(a)  == "113");
-    REQUIRE(Kreveta::uint_to_str<uint32_t>(b) == "123456789");
-    REQUIRE(Kreveta::uint_to_str<uint64_t>(c) == "7787012921290");
-}

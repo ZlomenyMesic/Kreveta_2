@@ -30,13 +30,6 @@ public:
 
 private:
 
-    // enum to allow switch statements in command handling
-    enum class Command : uint8_t {
-        CMD_UCI, CMD_ISREADY, CMD_UCINEWGAME, CMD_STOP, CMD_QUIT, CMD_POSITION, CMD_GO, CMD_PERFT, CMD_D, CMD_TEST
-    };
-
-    static const std::unordered_map<std::string_view, Command> cmd_map;
-
     // just to handle the empty case
     static void log_stats_rec(){}
 
@@ -44,10 +37,6 @@ private:
     static void log_stats_rec(const std::string &name, uint64_t value, Args... data);
 
     static void handle_command(const std::string &command);
-
-    inline static void cmd_uci() noexcept;
-    inline static void cmd_isready() noexcept;
-    inline static void cmd_d();
 
     inline static void cmd_position(const std::vector<std::string_view> &tokens);
 

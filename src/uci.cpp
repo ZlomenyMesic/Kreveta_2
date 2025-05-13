@@ -11,6 +11,7 @@
 #include "bitboard.h"
 #include "position.h"
 #include "utils.h"
+#include "movegen/movetables.h"
 
 namespace Kreveta {
 
@@ -53,46 +54,45 @@ void UCI::loop() {
         if (is_str_blank(command))
             continue;
 
+        // quit should exit the program immediately
+        if (command == "quit")
+            return;
+
         handle_command(command);
     }
 }
 
 void UCI::handle_command(const std::string &command) {
     const auto tokens = str_split(command);
-    const auto iterator = cmd_map.find(tokens.at(0));
+    const auto cmd = tokens[0];
 
-    // the command is not present in the map => unknown command
-    if (iterator == cmd_map.end()) {
-        log(std::format("Unknown command '{}'", tokens.at(0)));
-        return;
+    if (cmd == "uci") {
+        log(std::format("id name {}-{}\nid author {}", ENGINE_NAME, ENGINE_VERSION, ENGINE_AUTHOR));
+        log("uciok");
     }
 
-    switch (iterator->second) {
-        case Command::CMD_UCI:      cmd_uci();            break;
-        case Command::CMD_ISREADY:  cmd_isready();        break;
-        case Command::CMD_D:        cmd_d();              break;
+    else if (cmd == "isready") {
+        log("readyok");
+    }
 
-        case Command::CMD_POSITION: cmd_position(tokens); break;
+    else if (cmd == "d") {
+        Position::board.print();
+    }
+
+    else if (cmd == "position") {
+        cmd_position(tokens);
+    }
 
 #ifdef DEBUG
-        case Command::CMD_TEST:     cmd_test();           break;
+    else if (cmd == "test") {
+        cmd_test();
+    }
 #endif
 
-        default: break;
+    else {
+        log(std::format("Unknown command '{}'", cmd));
+        return;
     }
-}
-
-inline void UCI::cmd_uci() noexcept {
-    log(std::format("id name {}-{}\nid author {}", ENGINE_NAME, ENGINE_VERSION, ENGINE_AUTHOR));
-    log("uciok");
-}
-
-inline void UCI::cmd_isready() noexcept {
-    log("readyok");
-}
-
-inline void UCI::cmd_d() {
-    Position::board.print();
 }
 
 
@@ -115,24 +115,12 @@ void UCI::cmd_position(const std::vector<std::string_view> &tokens) {
 
 #ifdef DEBUG
 void UCI::cmd_test() {
+    log("Hello, World!");
 
+    uint64_t king = 0x0800000000000000;
+
+    log((int)popc(MoveTables::get_king_targets(king, 0xFFFFFFFFFFFFFFFF)));
 }
 #endif
-
-// maps all commands to their respective enum. while this is
-// essentially useless, it allows us to process the command
-// with a switch statement, which feels great
-const std::unordered_map<std::string_view, UCI::Command> UCI::cmd_map = {
-    {"uci",        Command::CMD_UCI},
-    {"isready",    Command::CMD_ISREADY},
-    {"ucinewgame", Command::CMD_UCINEWGAME},
-    {"stop",       Command::CMD_STOP},
-    {"quit",       Command::CMD_QUIT},
-    {"position",   Command::CMD_POSITION},
-    {"go",		  Command::CMD_GO},
-    {"perft",      Command::CMD_PERFT},
-    {"d",          Command::CMD_D},
-    {"test",       Command::CMD_TEST},
-};
 
 }

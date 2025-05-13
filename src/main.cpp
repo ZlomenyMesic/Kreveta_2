@@ -7,6 +7,7 @@
 
 #include "uci.h"
 #include "position.h"
+#include "movegen/movetables.h"
 
 int main(const int argc, [[maybe_unused]] char *argv[]) {
     using namespace Kreveta;
@@ -16,6 +17,9 @@ int main(const int argc, [[maybe_unused]] char *argv[]) {
         std::cerr << "Command line arguments are not supported" << std::endl;
         return 1;
     }
+
+    // initialize move lookup arrays
+    MoveTables::init();
 
     // to avoid bugs, we have the startpos from the beginning
     Position::set_startpos({});

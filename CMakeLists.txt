@@ -28,6 +28,10 @@ add_library(Kreveta_2_logic
         src/global/types.h
         src/movegen/move.cpp
         src/movegen/move.h
+        src/movegen/movetables.cpp
+        src/movegen/movetables.h
+        src/movegen/movegen.cpp
+        src/movegen/movegen.h
         src/board.cpp
         src/board.h
         src/position.cpp
@@ -46,6 +50,10 @@ add_executable(Kreveta_2 src/main.cpp
         src/global/types.h
         src/movegen/move.cpp
         src/movegen/move.h
+        src/movegen/movetables.cpp
+        src/movegen/movetables.h
+        src/movegen/movegen.cpp
+        src/movegen/movegen.h
         src/board.cpp
         src/board.h
         src/position.cpp
